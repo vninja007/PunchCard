@@ -12,8 +12,8 @@ async def init(ctx, arg=""):
         botdata[ctx.author.id] = {}
         botdata[ctx.author.id]["total"] = 0
         botdata[ctx.author.id]["sessions"] = 0
-        botdata[ctx.author.id]["start"] = -1
-        botdata[ctx.author.id]["livetask"] = ""
+        # botdata[ctx.author.id]["start"] = -1
+        # botdata[ctx.author.id]["livetask"] = ""
         botdata[ctx.author.id]["tasks"] = {}
         writeData()
         await ctx.send("Initialized user. You now exist! Use p.start and p.stop for check-in/check-out!")
@@ -61,7 +61,7 @@ async def deltask(ctx, *, arg=""):
 async def start(ctx, *, arg=""):
     arg = arg.lower()
     if (ctx.author.id in botdata):
-        if (botdata[ctx.author.id]["start"] == -1):
+        if ("start" not in botdata[ctx.author.id]):
             if (arg != ""):
                 if (arg not in botdata[ctx.author.id]["tasks"]):
                     await ctx.send("No task named '"+arg+"'")
@@ -88,7 +88,7 @@ async def start(ctx, *, arg=""):
 async def stop(ctx, *, arg=""):
     arg = arg.lower()
     if (ctx.author.id in botdata):
-        if (botdata[ctx.author.id]["start"] != -1):
+        if ("start" in botdata[ctx.author.id]):
             ut = getUTime()
             tt = getTime()
             t1 = botdata[ctx.author.id]["start"]
@@ -97,18 +97,18 @@ async def stop(ctx, *, arg=""):
             hrs = (t2-t1)//3600
             mins = ((t2-t1)//60) % 60
             secs = ((t2-t1) % 60) // 1
-            if (botdata[ctx.author.id]["livetask"] != ""):
+            if ("livetask" in botdata[ctx.author.id]):
                 task = botdata[ctx.author.id]["livetask"]
                 botdata[ctx.author.id]["tasks"][task] += worked
-                botdata[ctx.author.id]["livetask"] = ""
+                del botdata[ctx.author.id]["livetask"]
                 botdata[ctx.author.id]["total"] += worked
-                botdata[ctx.author.id]["start"] = -1
+                del botdata[ctx.author.id]["start"]
                 botdata[ctx.author.id]["sessions"] += 1
                 writeData()
                 await ctx.send("Clocked out from '"+arg+"' at " + str(tt) + ". You worked for "+str(int(hrs))+" hrs "+str(int(mins))+" mins "+str(int(secs))+" secs.")
             else:
                 botdata[ctx.author.id]["total"] += worked
-                botdata[ctx.author.id]["start"] = -1
+                del botdata[ctx.author.id]["start"]
                 botdata[ctx.author.id]["sessions"] += 1
                 writeData()
                 await ctx.send("Clocked out at " + str(tt) + ". You worked for "+str(int(hrs))+" hrs "+str(int(mins))+" mins "+str(int(secs))+" secs.")
