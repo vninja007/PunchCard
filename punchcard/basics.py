@@ -1,8 +1,10 @@
 from nextcord.ext import commands
 import nextcord
+
 import time as pytime
 import datetime
-from init import bot
+
+from init import bot, offset
 
 
 @bot.command()
@@ -22,11 +24,12 @@ async def foo(ctx, arg=1):
 
 @bot.command()
 async def utime(ctx, arg=""):
-    await ctx.send(str(pytime.time()))
+    await ctx.send(str(pytime.time() - 3600*offset))
 
 
 @bot.command()
 async def time(ctx, arg=""):
-    dt = str(datetime.datetime.now())
+    dtn = datetime.datetime.now() - datetime.timedelta(hours=offset)
+    dt = str(dtn)
     dt = dt[:dt.index(".")]
     await ctx.send(dt)
