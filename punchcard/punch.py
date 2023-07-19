@@ -48,6 +48,7 @@ async def stop(ctx, arg=""):
             secs = ((t2-t1) % 60) // 1
             botdata[ctx.author.id]["total"] += worked
             botdata[ctx.author.id]["start"] = -1
+            botdata[ctx.author.id]["sessions"] += 1
             writeData()
             await ctx.send("Clocked out at " + str(tt) + ". You worked for "+str(hrs)+" hrs "+str(mins)+" mins "+str(secs)+".")
         else:
