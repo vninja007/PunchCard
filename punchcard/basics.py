@@ -43,6 +43,10 @@ def getTime(ctx, arg=""):
     return dt
 
 
+def getUTime(ctx, arg=""):
+    return (str(pytime.time() - 3600*offset))
+
+
 @bot.command()
 async def version(ctx, arg=""):
     await ctx.send(botversion)

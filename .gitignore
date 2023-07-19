@@ -1,3 +1,4 @@
 *.key
 config.yml
 __pycache__/
+data.yml
