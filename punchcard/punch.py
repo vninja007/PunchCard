@@ -43,9 +43,9 @@ async def stop(ctx, arg=""):
             t1 = botdata[ctx.author.id]["start"]
             t2 = getUTime()
             worked = round((t2-t1)/60, 2)
-            hrs = (t1-t2)//3600
-            mins = ((t2-t1) % 60)//1
-            secs = (t2-t1) % 60
+            hrs = (t2-t1)//3600
+            mins = ((t2-t1)//60) % 60
+            secs = ((t2-t1) % 60) // 1
             botdata[ctx.author.id]["total"] += worked
             botdata[ctx.author.id]["start"] = -1
             writeData()
