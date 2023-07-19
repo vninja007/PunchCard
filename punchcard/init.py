@@ -13,6 +13,9 @@ with open("../config.yml", "r") as conffile:
 with open("../data.yml", "r") as datafile:
     botdata = yaml.safe_load(datafile)
 
-timezone = botconf["Timezone"]
+timezone = botconf["timezone"]
+botversion = botconf["version"]
+print("Version: "+str(botversion))
+
 offset = float(timezone[3:])
 print("Offset: "+str(offset))

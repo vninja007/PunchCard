@@ -4,7 +4,7 @@ import nextcord
 import time as pytime
 import datetime
 
-from init import bot, offset
+from init import bot, offset, botversion
 
 
 @bot.command()
@@ -33,3 +33,19 @@ async def time(ctx, arg=""):
     dt = str(dtn)
     dt = dt[:dt.index(".")]
     await ctx.send(dt)
+
+
+@bot.command()
+async def version(ctx, arg=""):
+    await ctx.send(botversion)
+
+
+@bot.command()
+async def ping(ctx, arg=""):
+    p1 = ctx.message.created_at.replace(tzinfo=None)
+    p2 = datetime.datetime.now().replace(tzinfo=None) - \
+        datetime.timedelta(hours=offset)
+    diff = str(p2-p1)
+    difftime = round(float(diff[diff.index("."):])*1000)
+
+    await ctx.send("Pong! "+str(difftime)+" ms")
