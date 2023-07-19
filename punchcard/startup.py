@@ -1,7 +1,7 @@
 from nextcord.ext import commands
 import nextcord
 import yaml
-
+import datetime
 
 intents = nextcord.Intents.default()
 intents.message_content = True
@@ -12,6 +12,9 @@ with open("../config.yml", "r") as conffile:
 
 with open("../data.yml", "r") as datafile:
     botdata = yaml.safe_load(datafile)
+
+print(type(botconf))
+print(type(botdata))
 
 timezone = botconf["timezone"]
 botversion = botconf["version"]

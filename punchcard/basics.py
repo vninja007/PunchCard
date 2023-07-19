@@ -3,8 +3,9 @@ import nextcord
 
 import time as pytime
 import datetime
+import yaml
 
-from init import bot, offset, botversion
+from startup import bot, offset, botversion, botdata, botconf
 
 
 @bot.command()
@@ -35,6 +36,13 @@ async def time(ctx, arg=""):
     await ctx.send(dt)
 
 
+def getTime(ctx, arg=""):
+    dtn = datetime.datetime.now() - datetime.timedelta(hours=offset)
+    dt = str(dtn)
+    dt = dt[:dt.index(".")]
+    return dt
+
+
 @bot.command()
 async def version(ctx, arg=""):
     await ctx.send(botversion)
@@ -49,3 +57,14 @@ async def ping(ctx, arg=""):
     difftime = round(float(diff[diff.index("."):])*1000)
 
     await ctx.send("Pong! "+str(difftime)+" ms")
+
+
+def writeData():
+    with open("../data.yml", "w+") as wfile:
+        botdata["timestamp"] = getTime()
+        yaml.dump(botdata, wfile)
+
+
+def writeConf():
+    with open("../conf.yml", "w+") as wfile:
+        yaml.dump(botconf, wfile)
