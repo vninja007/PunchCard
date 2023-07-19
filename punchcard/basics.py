@@ -36,15 +36,15 @@ async def time(ctx, arg=""):
     await ctx.send(dt)
 
 
-def getTime(ctx, arg=""):
+def getTime(arg=""):
     dtn = datetime.datetime.now() - datetime.timedelta(hours=offset)
     dt = str(dtn)
     dt = dt[:dt.index(".")]
     return dt
 
 
-def getUTime(ctx, arg=""):
-    return (str(pytime.time() - 3600*offset))
+def getUTime(arg=""):
+    return (pytime.time() - 3600*offset)
 
 
 @bot.command()

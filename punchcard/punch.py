@@ -41,13 +41,15 @@ async def stop(ctx, arg=""):
             ut = getUTime()
             tt = getTime()
             t1 = botdata[ctx.author.id]["start"]
-            t2 = getTime()
+            t2 = getUTime()
             worked = round((t2-t1)/60, 2)
-            hrs = (t2-t1)//60
-            mins = (t2-t1) % 60
+            hrs = (t1-t2)//3600
+            mins = ((t2-t1) % 60)//1
+            secs = (t2-t1) % 60
             botdata[ctx.author.id]["total"] += worked
+            botdata[ctx.author.id]["start"] = -1
             writeData()
-            await ctx.send("Clocked out at " + str(tt) + ". You worked for "+str(hrs)+" hrs and "+str(mins)+" mins.")
+            await ctx.send("Clocked out at " + str(tt) + ". You worked for "+str(hrs)+" hrs "+str(mins)+" mins "+str(secs)+".")
         else:
             await ctx.send("User is already clocked out! Use p.start to clock in!")
     else:
