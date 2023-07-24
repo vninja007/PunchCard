@@ -43,6 +43,13 @@ def getTime(arg=""):
     return dt
 
 
+def getDate(arg=""):
+    dtn = datetime.datetime.now() - datetime.timedelta(hours=offset)
+    dt = str(dtn)
+    dt = dt[:dt.index(" ")]
+    return dt
+
+
 def getUTime(arg=""):
     return (pytime.time() - 3600*offset)
 
