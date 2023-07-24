@@ -50,6 +50,12 @@ def getDate(arg=""):
     return dt
 
 
+def getDateTime():
+    dtn = datetime.datetime.now() - datetime.timedelta(hours=offset)
+    dt = str(dtn.strftime("%Y-%m-%d %H:%M:%S"))
+    return dt
+
+
 def getUTime(arg=""):
     return (pytime.time() - 3600*offset)
 

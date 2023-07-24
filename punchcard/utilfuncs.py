@@ -1,7 +1,36 @@
 import re
+import datetime
 from basics import getDate
 from startup import botdata
-from basics import writeData
+from basics import writeData, getUTime, getTime, getDateTime
+from datetime import time as dtime
+from datetime import date
+from datetime import datetime
+
+
+def clockOutProcedure(author):
+    t1 = botdata[author]["start"]               # 2023-01-01 12:34:56
+    t2 = getDateTime()                          # 2023-01-01 13:34:56
+    tt = getTime()
+    elapsed = diffDatefromDate(t1, t2)   # 01:00:00
+    print(elapsed)
+    if ("livetask" in botdata[author]):
+
+        task = botdata[author]["livetask"]
+        botdata[author]["tasks"][task] = addTimetoTime(
+            elapsed, botdata[author]["tasks"][task])
+        del botdata[author]["livetask"]
+        botdata[author]["total"] = addTimetoTime(
+            elapsed, botdata[author]["total"])
+        del botdata[author]["start"]
+        botdata[author]["sessions"] += 1
+    else:
+        botdata[author]["total"] = addTimetoTime(
+            elapsed, botdata[author]["total"])
+        del botdata[author]["start"]
+        botdata[author]["sessions"] += 1
+    writeData()
+    return (tt, elapsed)
 
 
 def extractTime(instr):
@@ -61,5 +90,44 @@ def logDates(author):
 
 
 # calculate differnece between end and start
-def timeDiff(start, end):
-    pass
+
+# returns TIME
+def diffDatefromDate(start, end):
+    start = datetime.fromisoformat(start)
+    end = datetime.fromisoformat(end)
+    diff = end-start
+    if (not ("days" in str(diff))):
+        diff = "0 days, "+str(diff)
+    diff = str(diff).split(", ")
+    hms = diff[1]
+    hms = hms.split(":")
+    h = int(hms[0])
+    m = int(hms[1])
+    s = int(float(hms[2]))
+    days = int(diff[0].split(" ")[0])
+    h += 24*days
+    h = "0"+str(h) if h < 10 else h
+    m = "0"+str(m) if m < 10 else m
+    s = "0"+str(s) if s < 10 else s
+    return str(h)+":"+str(m)+":"+str(s)
+
+
+def addTimetoTime(start, end):
+    start = start.split(":")
+    end = end.split(":")
+    sh, sm, ss = (int(i) for i in start)
+    eh, em, es = (int(i) for i in end)
+    th = 0
+    tm = 0
+    ts = 0
+    ts += ss+es
+    tm += ts // 60
+    ts %= 60
+    tm += sm+em
+    th += tm // 60
+    tm %= 60
+    th += eh+sh
+    th = "0"+str(th) if th < 10 else th
+    tm = "0"+str(tm) if tm < 10 else tm
+    ts = "0"+str(ts) if ts < 10 else ts
+    return str(th)+":"+str(tm)+":"+str(ts)

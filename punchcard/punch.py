@@ -1,7 +1,8 @@
 from nextcord.ext import commands
 import nextcord
 from startup import bot, botdata
-from basics import writeData, writeConf, getUTime, getTime
+from basics import writeData, writeConf, getUTime, getTime, getDateTime
+from utilfuncs import clockOutProcedure
 
 
 @bot.command()
@@ -10,7 +11,7 @@ async def init(ctx, arg=""):
     if (ctx.author.id not in botdata):
 
         botdata[ctx.author.id] = {}
-        botdata[ctx.author.id]["total"] = 0
+        botdata[ctx.author.id]["total"] = "00:00:00"
         botdata[ctx.author.id]["sessions"] = 0
         # botdata[ctx.author.id]["start"] = -1
         # botdata[ctx.author.id]["livetask"] = ""
@@ -32,7 +33,7 @@ async def maketask(ctx, *, arg=""):
             if (arg in botdata[ctx.author.id]["tasks"]):
                 await ctx.send("Task already exists")
             else:
-                botdata[ctx.author.id]["tasks"][arg] = 0.0
+                botdata[ctx.author.id]["tasks"][arg] = "00:00:00"
                 await ctx.send("Created task '"+arg+"'")
                 writeData()
     else:
@@ -72,14 +73,14 @@ async def start(ctx, *, arg=""):
                     else:
                         ut = getUTime()
                         tt = getTime()
-                        botdata[ctx.author.id]["start"] = getUTime()
+                        botdata[ctx.author.id]["start"] = getDateTime()
                         botdata[ctx.author.id]["livetask"] = arg
                         writeData()
                         await ctx.send("Clocked in for '"+arg+"' at " + str(tt))
                 else:
                     ut = getUTime()
                     tt = getTime()
-                    botdata[ctx.author.id]["start"] = getUTime()
+                    botdata[ctx.author.id]["start"] = getDateTime()
                     writeData()
                     await ctx.send("Clocked in at " + str(tt))
             else:
@@ -93,29 +94,8 @@ async def stop(ctx, *, arg=""):
     arg = arg.lower()
     if (ctx.author.id in botdata):
         if ("start" in botdata[ctx.author.id]):
-            ut = getUTime()
-            tt = getTime()
-            t1 = botdata[ctx.author.id]["start"]
-            t2 = getUTime()
-            worked = float('{0:.2f}'.format((t2-t1)/60))
-            hrs = (t2-t1)//3600
-            mins = ((t2-t1)//60) % 60
-            secs = ((t2-t1) % 60) // 1
-            if ("livetask" in botdata[ctx.author.id]):
-                task = botdata[ctx.author.id]["livetask"]
-                botdata[ctx.author.id]["tasks"][task] += worked
-                del botdata[ctx.author.id]["livetask"]
-                botdata[ctx.author.id]["total"] += worked
-                del botdata[ctx.author.id]["start"]
-                botdata[ctx.author.id]["sessions"] += 1
-                writeData()
-                await ctx.send("Clocked out from '"+arg+"' at " + str(tt) + ". You worked for "+str(int(hrs))+" hrs "+str(int(mins))+" mins "+str(int(secs))+" secs.")
-            else:
-                botdata[ctx.author.id]["total"] += worked
-                del botdata[ctx.author.id]["start"]
-                botdata[ctx.author.id]["sessions"] += 1
-                writeData()
-                await ctx.send("Clocked out at " + str(tt) + ". You worked for "+str(int(hrs))+" hrs "+str(int(mins))+" mins "+str(int(secs))+" secs.")
+            tt, hms = clockOutProcedure(ctx.author.id)
+            await ctx.send("Clocked out from '"+arg+"' at " + str(tt) + ". You worked for "+str(hms))
         else:
             await ctx.send("User is already clocked out! Use p.start to clock in!")
     else:
@@ -128,31 +108,9 @@ async def on_presence_update(before, after):
         print("{} has gone {}.".format(after.name, after.status))
         if (after.id in botdata):
             if ("start" in botdata[after.id]):
-                ut = getUTime()
-                tt = getTime()
-                t1 = botdata[after.id]["start"]
-                t2 = getUTime()
-                worked = float('{0:.2f}'.format((t2-t1)/60))
-                hrs = (t2-t1)//3600
-                mins = ((t2-t1)//60) % 60
-                secs = ((t2-t1) % 60) // 1
-                if ("livetask" in botdata[after.id]):
-                    task = botdata[after.idd]["livetask"]
-                    botdata[after.id]["tasks"][task] += worked
-                    del botdata[after.id]["livetask"]
-                    botdata[after.id]["total"] += worked
-                    del botdata[after.id]["start"]
-                    botdata[after.id]["sessions"] += 1
-                    writeData()
-                    user = await bot.fetch_user(after.id)
-                    await user.send("You have been clocked out due to closing discord"+". You worked for "+str(int(hrs))+" hrs "+str(int(mins))+" mins "+str(int(secs))+" secs.")
-                else:
-                    botdata[after.id]["total"] += worked
-                    del botdata[after.id]["start"]
-                    botdata[after.id]["sessions"] += 1
-                    writeData()
-                    user = await bot.fetch_user(after.id)
-                    await user.send("You have been clocked out due to closing discord"+". You worked for "+str(int(hrs))+" hrs "+str(int(mins))+" mins "+str(int(secs))+" secs.")
+                tt, hms = clockOutProcedure(after.id)
+                user = await bot.fetch_user(after.id)
+                await user.send("You have been clocked out due to closing discord"+". You worked for "+str(hms))
 
 
 @bot.command()
