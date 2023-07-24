@@ -27,16 +27,19 @@ def extractTime(instr):
         x = re.match(r, instr)
         if (bool(x)):
             x = x.groups()
+            print(x)
             if (x[0] != None):
-                hours = int(x[0]) % 12
+                hours = int(x[0])
+                hours = hours-12 if hours == 12 or hours == 24 else hours
                 mins = int(x[1])
-                if (x[2] == "PM"):
+                if (x[2] == "PM" and hours < 12):
                     hours += 12
             else:
                 hours = int(x[3]) % 12
+                hours = hours-12 if hours == 12 or hours == 24 else hours
                 mins = int(x[4])
                 secs = int(x[5])
-                if (x[6] == "PM"):
+                if (x[6] == "PM" and hours < 12):
                     hours += 12
         else:
             # bad regex

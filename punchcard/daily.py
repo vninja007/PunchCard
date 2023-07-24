@@ -8,7 +8,7 @@ import datetime
 
 
 @bot.command()
-async def wakeup(ctx, arg=""):
+async def wakeup(ctx, *, arg=""):
     ex = extractTime(arg)
     if (arg == ""):
         await ctx.send("Usage: p.wakeup [time]")
@@ -24,7 +24,7 @@ async def wakeup(ctx, arg=""):
 
 
 @bot.command()
-async def sleep(ctx, arg=""):
+async def sleep(ctx, *, arg=""):
     ex = extractTime(arg)
     if (arg == ""):
         await ctx.send("Usage: p.sleep [time]")
@@ -40,7 +40,7 @@ async def sleep(ctx, arg=""):
 
 
 @bot.command()
-async def schoolstart(ctx, arg=""):
+async def schoolstart(ctx, *, arg=""):
     ex = extractTime(arg)
     if (arg == ""):
         await ctx.send("Usage: p.schoolstart [time]")
@@ -56,7 +56,7 @@ async def schoolstart(ctx, arg=""):
 
 
 @bot.command()
-async def schoolend(ctx, arg=""):
+async def schoolend(ctx, *, arg=""):
     ex = extractTime(arg)
     if (arg == ""):
         await ctx.send("Usage: p.schoolend [time]")
