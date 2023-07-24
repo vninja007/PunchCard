@@ -59,29 +59,33 @@ async def deltask(ctx, *, arg=""):
 
 @bot.command()
 async def start(ctx, *, arg=""):
-    arg = arg.lower()
-    if (ctx.author.id in botdata):
-        if ("start" not in botdata[ctx.author.id]):
-            if (arg != ""):
-                if (arg not in botdata[ctx.author.id]["tasks"]):
-                    await ctx.send("No task named '"+arg+"'")
+    if (ctx.message.author.raw_status == "offline"):
+        await ctx.send("You are offline/invisible! Please change to online/idle/donotdisturb to start!")
+
+    else:
+        arg = arg.lower()
+        if (ctx.author.id in botdata):
+            if ("start" not in botdata[ctx.author.id]):
+                if (arg != ""):
+                    if (arg not in botdata[ctx.author.id]["tasks"]):
+                        await ctx.send("No task named '"+arg+"'")
+                    else:
+                        ut = getUTime()
+                        tt = getTime()
+                        botdata[ctx.author.id]["start"] = getUTime()
+                        botdata[ctx.author.id]["livetask"] = arg
+                        writeData()
+                        await ctx.send("Clocked in for '"+arg+"' at " + str(tt))
                 else:
                     ut = getUTime()
                     tt = getTime()
                     botdata[ctx.author.id]["start"] = getUTime()
-                    botdata[ctx.author.id]["livetask"] = arg
                     writeData()
-                    await ctx.send("Clocked in for '"+arg+"' at " + str(tt))
+                    await ctx.send("Clocked in at " + str(tt))
             else:
-                ut = getUTime()
-                tt = getTime()
-                botdata[ctx.author.id]["start"] = getUTime()
-                writeData()
-                await ctx.send("Clocked in at " + str(tt))
+                await ctx.send("User is already clocked in! Use p.stop to clock out!")
         else:
-            await ctx.send("User is already clocked in! Use p.stop to clock out!")
-    else:
-        await ctx.send("User does not exist! Type p.init to begin!")
+            await ctx.send("User does not exist! Type p.init to begin!")
 
 
 @bot.command()
@@ -116,6 +120,39 @@ async def stop(ctx, *, arg=""):
             await ctx.send("User is already clocked out! Use p.start to clock in!")
     else:
         await ctx.send("User does not exist! Type p.init to begin!")
+
+
+@bot.event
+async def on_presence_update(before, after):
+    if str(after.status) == "offline":
+        print("{} has gone {}.".format(after.name, after.status))
+        if (after.id in botdata):
+            if ("start" in botdata[after.id]):
+                ut = getUTime()
+                tt = getTime()
+                t1 = botdata[after.id]["start"]
+                t2 = getUTime()
+                worked = float('{0:.2f}'.format((t2-t1)/60))
+                hrs = (t2-t1)//3600
+                mins = ((t2-t1)//60) % 60
+                secs = ((t2-t1) % 60) // 1
+                if ("livetask" in botdata[after.id]):
+                    task = botdata[after.idd]["livetask"]
+                    botdata[after.id]["tasks"][task] += worked
+                    del botdata[after.id]["livetask"]
+                    botdata[after.id]["total"] += worked
+                    del botdata[after.id]["start"]
+                    botdata[after.id]["sessions"] += 1
+                    writeData()
+                    user = await bot.fetch_user(after.id)
+                    await user.send("You have been clocked out due to closing discord"+". You worked for "+str(int(hrs))+" hrs "+str(int(mins))+" mins "+str(int(secs))+" secs.")
+                else:
+                    botdata[after.id]["total"] += worked
+                    del botdata[after.id]["start"]
+                    botdata[after.id]["sessions"] += 1
+                    writeData()
+                    user = await bot.fetch_user(after.id)
+                    await user.send("You have been clocked out due to closing discord"+". You worked for "+str(int(hrs))+" hrs "+str(int(mins))+" mins "+str(int(secs))+" secs.")
 
 
 @bot.command()

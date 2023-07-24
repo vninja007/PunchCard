@@ -5,7 +5,10 @@ import datetime
 
 intents = nextcord.Intents.default()
 intents.message_content = True
+intents.members = True
+intents.presences = True
 bot = commands.Bot(command_prefix="p.", intents=intents)
+
 
 with open("../config.yml", "r") as conffile:
     botconf = yaml.safe_load(conffile)
