@@ -37,3 +37,35 @@ async def sleep(ctx, arg=""):
         writeData()
         await ctx.send("Sleep time for "+getDate()+" set to "+":".join("0"*(2-len(str(i)))+str(i)
                                                                        for i in ex))
+
+
+@bot.command()
+async def schoolstart(ctx, arg=""):
+    ex = extractTime(arg)
+    if (arg == ""):
+        await ctx.send("Usage: p.schoolstart [time]")
+    elif (ex[0] == -1):
+        await ctx.send("Incorrect time")
+    else:
+        logDates(ctx.author.id)
+        botdata[ctx.author.id][getDate()]["schoolstart"] = ":".join("0"*(2-len(str(i)))+str(i)
+                                                                    for i in ex)
+        writeData()
+        await ctx.send("School start time for "+getDate()+" set to "+":".join("0"*(2-len(str(i)))+str(i)
+                                                                              for i in ex))
+
+
+@bot.command()
+async def schoolend(ctx, arg=""):
+    ex = extractTime(arg)
+    if (arg == ""):
+        await ctx.send("Usage: p.schoolend [time]")
+    elif (ex[0] == -1):
+        await ctx.send("Incorrect time")
+    else:
+        logDates(ctx.author.id)
+        botdata[ctx.author.id][getDate()]["schoolend"] = ":".join("0"*(2-len(str(i)))+str(i)
+                                                                  for i in ex)
+        writeData()
+        await ctx.send("School end time for "+getDate()+" set to "+":".join("0"*(2-len(str(i)))+str(i)
+                                                                            for i in ex))
