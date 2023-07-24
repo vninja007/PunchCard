@@ -16,10 +16,10 @@ async def wakeup(ctx, arg=""):
         await ctx.send("Incorrect time")
     else:
         logDates(ctx.author.id)
-        botdata[ctx.author.id][getDate()]["wakeup"] = ":".join(str(i)
+        botdata[ctx.author.id][getDate()]["wakeup"] = ":".join("0"*(2-len(str(i)))+str(i)
                                                                for i in ex)
         writeData()
-        await ctx.send("Wakeup time for "+getDate()+" set to "+":".join(str(i)
+        await ctx.send("Wakeup time for "+getDate()+" set to "+":".join("0"*(2-len(str(i)))+str(i)
                                                                         for i in ex))
 
 
@@ -32,8 +32,8 @@ async def sleep(ctx, arg=""):
         await ctx.send("Incorrect time")
     else:
         logDates(ctx.author.id)
-        botdata[ctx.author.id][getDate()]["sleep"] = ":".join(str(i)
+        botdata[ctx.author.id][getDate()]["sleep"] = ":".join("0"*(2-len(str(i)))+str(i)
                                                               for i in ex)
         writeData()
-        await ctx.send("Sleep time for "+getDate()+" set to "+":".join(str(i)
+        await ctx.send("Sleep time for "+getDate()+" set to "+":".join("0"*(2-len(str(i)))+str(i)
                                                                        for i in ex))
