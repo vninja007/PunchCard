@@ -43,14 +43,23 @@ def extractTime(instr):
                     hours += 12
         else:
             # bad regex
-            return (-1, -1, -1)
+            return "-1:-1:-1"
     hours %= 24
     mins %= 60
     secs %= 60
-    return (int(hours), int(mins), int(secs))
+    hours = "0"+str(hours) if hours < 10 else hours
+    mins = "0"+str(mins) if mins < 10 else mins
+    secs = "0"+str(secs) if secs < 10 else secs
+
+    return str(hours) + ":" + str(mins) + ":" + str(secs)
 
 
 def logDates(author):
     if (getDate() not in botdata[author]):
         botdata[author][getDate()] = {}
         writeData()
+
+
+# calculate differnece between end and start
+def timeDiff(start, end):
+    pass
