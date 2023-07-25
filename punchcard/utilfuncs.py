@@ -11,7 +11,7 @@ from datetime import datetime
 def clockOutProcedure(author):
     t1 = botdata[author]["start"]               # 2023-01-01 12:34:56
     t2 = getDateTime()                          # 2023-01-01 13:34:56
-    tt = getTime()
+    tt = getTime(botdata[author]["timezone"])
     elapsed = diffDatefromDate(t1, t2)   # 01:00:00
     print(elapsed)
     if ("livetask" in botdata[author]):

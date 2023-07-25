@@ -7,17 +7,24 @@ from utilfuncs import clockOutProcedure
 
 @bot.command()
 async def init(ctx, arg=""):
+    arg = arg.upper()
+    arg = arg.replace("UTC", "")
+    arg = arg.replace("GMT", "")
+    arg = arg.replace("+", "")
     print(type(botdata))
     if (ctx.author.id not in botdata):
-
-        botdata[ctx.author.id] = {}
-        botdata[ctx.author.id]["total"] = "00:00:00"
-        botdata[ctx.author.id]["sessions"] = 0
-        # botdata[ctx.author.id]["start"] = -1
-        # botdata[ctx.author.id]["livetask"] = ""
-        botdata[ctx.author.id]["tasks"] = {}
-        writeData()
-        await ctx.send("Initialized user. You now exist! Use p.start and p.stop for check-in/check-out!")
+        if (arg != "" or not arg.isnumeric()):
+            botdata[ctx.author.id] = {}
+            botdata[ctx.author.id]["total"] = "00:00:00"
+            botdata[ctx.author.id]["sessions"] = 0
+            botdata[ctx.author.id]["timezone"] = int(arg)
+            # botdata[ctx.author.id]["start"] = -1
+            # botdata[ctx.author.id]["livetask"] = ""
+            botdata[ctx.author.id]["tasks"] = {}
+            writeData()
+            await ctx.send("Initialized user. You now exist! Use p.start and p.stop for check-in/check-out!")
+        else:
+            await ctx.send("Usage: p.init (timezone)")
     else:
         await ctx.send("User already exists!")
 
@@ -72,14 +79,14 @@ async def start(ctx, *, arg=""):
                         await ctx.send("No task named '"+arg+"'")
                     else:
                         ut = getUTime()
-                        tt = getTime()
+                        tt = getTime(botdata[ctx.author.id]["timezone"])
                         botdata[ctx.author.id]["start"] = getDateTime()
                         botdata[ctx.author.id]["livetask"] = arg
                         writeData()
                         await ctx.send("Clocked in for '"+arg+"' at " + str(tt))
                 else:
                     ut = getUTime()
-                    tt = getTime()
+                    tt = getTime(botdata[ctx.author.id]["timezone"])
                     botdata[ctx.author.id]["start"] = getDateTime()
                     writeData()
                     await ctx.send("Clocked in at " + str(tt))
@@ -95,7 +102,11 @@ async def stop(ctx, *, arg=""):
     if (ctx.author.id in botdata):
         if ("start" in botdata[ctx.author.id]):
             tt, hms = clockOutProcedure(ctx.author.id)
-            await ctx.send("Clocked out from '"+arg+"' at " + str(tt) + ". You worked for "+str(hms))
+            if (arg != ""):
+                await ctx.send("Clocked out from '"+arg+"' at " + str(tt) + ". You worked for "+str(hms))
+            else:
+                await ctx.send("Clocked out at " + str(tt) + ". You worked for "+str(hms))
+
         else:
             await ctx.send("User is already clocked out! Use p.start to clock in!")
     else:

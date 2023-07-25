@@ -36,8 +36,9 @@ async def time(ctx, arg=""):
     await ctx.send(dt)
 
 
-def getTime(arg=""):
-    dtn = datetime.datetime.now() - datetime.timedelta(hours=offset)
+def getTime(useroffset=0):
+    dtn = datetime.datetime.now() - datetime.timedelta(hours=offset) + \
+        datetime.timedelta(hours=useroffset)
     dt = str(dtn)
     dt = dt[:dt.index(".")]
     return dt
