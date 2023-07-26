@@ -1,25 +1,30 @@
 from nextcord.ext import commands
 import nextcord
 from startup import bot, botdata
-from basics import writeData, writeConf, getUTime, getTime, getDate
+from basics import writeData, writeConf, getUTime, getTime, getDate, getDateTime
 import re
-from utilfuncs import extractTime, logDates
+from utilfuncs import extractTime, logDates, correctDate
 import datetime
 
 
 @bot.command()
 async def wakeup(ctx, *, arg=""):
-    ex = extractTime(arg)
+    if (arg != ""):
+        ex = extractTime(arg)
+        print("Extracted: "+ex)
+    else:
+        ex = ""
     if (arg == ""):
         await ctx.send("Usage: p.wakeup [time]")
     elif (ex[0:2] == "-1"):
         await ctx.send("Incorrect time")
     else:
-        logDates(ctx.author.id, "wake")
-        botdata[ctx.author.id][getDate(
-            botdata[ctx.author.id]["timezone"])]["wakeup"] = ex
+        logDates(ctx.author.id, ex, "wake")
+        day = correctDate(ctx.author.id, ex, "wake")
+        thedate = day.split()[0]
+        botdata[ctx.author.id][thedate]["wakeup"] = ex
         writeData()
-        await ctx.send("Wakeup time for "+getDate(botdata[ctx.author.id]["timezone"])+" set to "+ex)
+        await ctx.send("Wakeup time for "+str(thedate)+" set to "+ex)
 
 
 @bot.command()

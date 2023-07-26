@@ -53,7 +53,8 @@ def getDate(arg="", useroffset=0):
 
 
 def getDateTime(useroffset=0):
-    dtn = datetime.datetime.now() - datetime.timedelta(hours=offset)
+    dtn = datetime.datetime.now() - datetime.timedelta(hours=offset) + \
+        datetime.timedelta(hours=useroffset)
     dt = str(dtn.strftime("%Y-%m-%d %H:%M:%S"))
     return dt
 

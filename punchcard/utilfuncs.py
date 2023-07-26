@@ -39,7 +39,7 @@ def clockOutProcedure(author):
 
 """
 Input: Time format
-Output: (h, m, s)
+Output: HH:MM:SS
 """
 
 
@@ -99,16 +99,23 @@ OUT: YYYY-MM-DD HH:mm:SS
 """
 
 
-def correctDate(author, boundary="none", theday=""):
+def correctDate(author, theday="", boundary="none"):
 
     if (theday == ""):
         theday = getDateTime(botdata[author]["timezone"])
-    tmp = theday.split()
+        print(theday)
+    if (theday.count("-") == 0):
+        td1 = getDate(botdata[author]["timezone"])
+        theday = td1 + " " + theday
+
+    tmp = theday.split(" ")
+    print(tmp)
     time = tmp[1]
     date = tmp[0]
 
     if (boundary == "wake"):
         if (detWakeupBoundary(time)):
+            print(detWakeupBoundary(time))
             theday = addDaytoDate(theday, 1)
     if (boundary == "sleep"):
         if (detSleepBoundary(time)):
@@ -117,11 +124,12 @@ def correctDate(author, boundary="none", theday=""):
     return theday
 
 
-def logDates(author, boundary="none"):
-    date = correctDate(author, boundary)
+def logDates(author, theday, boundary="none"):
+    date = correctDate(author, theday, boundary)
+    print("logdate:" + date)
     date = date.split()[0]
     if (date not in botdata[author]):
-        botdata[author][getDate(botdata[author]["timezone"])] = {}
+        botdata[author][date] = {}
         writeData()
 
 
@@ -221,6 +229,7 @@ the "opposite" of detSleepBoundary. Wakeup past XX:XX PM is considered "the next
 def detWakeupBoundary(intime):
     intime = [int(i) for i in intime.split(":")]
     dec = intime[0] + intime[1]/60 + intime[2]//3600
-    if (dec < 24 and dec > float(botconf["nightboundary"])):
+
+    if (dec < 24 and dec > float(botconf["dayboundary"])):
         return True
     return False
