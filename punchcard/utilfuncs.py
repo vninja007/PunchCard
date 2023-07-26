@@ -1,11 +1,15 @@
 import re
 import datetime
 from basics import getDate
-from startup import botdata
+from startup import botdata, botconf
 from basics import writeData, getUTime, getTime, getDateTime
 from datetime import time as dtime
 from datetime import date
 from datetime import datetime
+
+"""
+Procedure for clocking out
+"""
 
 
 def clockOutProcedure(author):
@@ -31,6 +35,12 @@ def clockOutProcedure(author):
         botdata[author]["sessions"] += 1
     writeData()
     return (tt, elapsed)
+
+
+"""
+Input: Time format
+Output: (h, m, s)
+"""
 
 
 def extractTime(instr):
@@ -89,9 +99,15 @@ def logDates(author):
         writeData()
 
 
-# calculate differnece between end and start
+# calculate difference between end and start
 
 # returns TIME
+"""
+IN: YYYY-MM-DD HH:mm:SS
+OUT: HH:MM:SS
+"""
+
+
 def diffDatefromDate(start, end):
     start = datetime.fromisoformat(start)
     end = datetime.fromisoformat(end)
@@ -110,6 +126,12 @@ def diffDatefromDate(start, end):
     m = "0"+str(m) if m < 10 else m
     s = "0"+str(s) if s < 10 else s
     return str(h)+":"+str(m)+":"+str(s)
+
+
+"""
+IN - HH:MM:SS
+OUT - HH:MM:SS
+"""
 
 
 def addTimetoTime(start, end):
@@ -131,3 +153,37 @@ def addTimetoTime(start, end):
     tm = "0"+str(tm) if tm < 10 else tm
     ts = "0"+str(ts) if ts < 10 else ts
     return str(th)+":"+str(tm)+":"+str(ts)
+
+
+"""
+IN: HH:mm:SS
+OUT: t/f
+
+Determines whether to add +1 day beacuse we naturally stay up past 12:00 sometimes.
+
+Cutoff = 2:30
+"""
+
+
+def detSleepBoundary(intime):
+    intime = [int(i) for i in intime.split(":")]
+    dec = intime[0] + intime[1]/60 + intime[2]//3600
+    if (dec > 0 and dec < float(botconf["nightboundary"])):
+        return True
+    return False
+
+
+"""
+IN: HH:mm:SS
+OUT: t/f
+
+the "opposite" of detSleepBoundary. Wakeup past XX:XX PM is considered "the next day" to account for detSleepBoundary's shift.
+"""
+
+
+def detWakeupBoundary(intime):
+    intime = [int(i) for i in intime.split(":")]
+    dec = intime[0] + intime[1]/60 + intime[2]//3600
+    if (dec < 24 and dec > float(botconf["nightboundary"])):
+        return True
+    return False
