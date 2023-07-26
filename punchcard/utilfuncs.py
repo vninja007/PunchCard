@@ -4,7 +4,7 @@ from basics import getDate
 from startup import botdata, botconf
 from basics import writeData, getUTime, getTime, getDateTime
 from datetime import time as dtime
-from datetime import date
+from datetime import date, timedelta
 from datetime import datetime
 
 """
@@ -93,14 +93,39 @@ def extractTime(instr):
     return str(hours) + ":" + str(mins) + ":" + str(secs)
 
 
-def logDates(author):
-    if (getDate() not in botdata[author]):
-        botdata[author][getDate()] = {}
+"""
+IN: YYYY-MM-DD HH:mm:SS
+OUT: YYYY-MM-DD HH:mm:SS
+"""
+
+
+def correctDate(author, boundary="none", theday=""):
+
+    if (theday == ""):
+        theday = getDateTime(botdata[author]["timezone"])
+    tmp = theday.split()
+    time = tmp[1]
+    date = tmp[0]
+
+    if (boundary == "wake"):
+        if (detWakeupBoundary(time)):
+            theday = addDaytoDate(theday, 1)
+    if (boundary == "sleep"):
+        if (detSleepBoundary(time)):
+            theday = addDaytoDate(theday, -1)
+
+    return theday
+
+
+def logDates(author, boundary="none"):
+    date = correctDate(author, boundary)
+    date = date.split()[0]
+    if (date not in botdata[author]):
+        botdata[author][getDate(botdata[author]["timezone"])] = {}
         writeData()
 
 
 # calculate difference between end and start
-
 # returns TIME
 """
 IN: YYYY-MM-DD HH:mm:SS
@@ -126,6 +151,18 @@ def diffDatefromDate(start, end):
     m = "0"+str(m) if m < 10 else m
     s = "0"+str(s) if s < 10 else s
     return str(h)+":"+str(m)+":"+str(s)
+
+
+"""
+IN1: YYYY-MM-DD HH:mm:SS
+IN2: #
+OUT: YYYY-MM-DD HH:mm:SS
+"""
+
+
+def addDaytoDate(start, inc):
+    start = datetime.fromisoformat(start) + timedelta(days=inc)
+    return str(start)
 
 
 """

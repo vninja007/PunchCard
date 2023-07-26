@@ -15,10 +15,11 @@ async def wakeup(ctx, *, arg=""):
     elif (ex[0:2] == "-1"):
         await ctx.send("Incorrect time")
     else:
-        logDates(ctx.author.id)
-        botdata[ctx.author.id][getDate()]["wakeup"] = ex
+        logDates(ctx.author.id, "wake")
+        botdata[ctx.author.id][getDate(
+            botdata[ctx.author.id]["timezone"])]["wakeup"] = ex
         writeData()
-        await ctx.send("Wakeup time for "+getDate()+" set to "+ex)
+        await ctx.send("Wakeup time for "+getDate(botdata[ctx.author.id]["timezone"])+" set to "+ex)
 
 
 @bot.command()
@@ -29,7 +30,7 @@ async def sleep(ctx, *, arg=""):
     elif (ex[0:2] == "-1"):
         await ctx.send("Incorrect time")
     else:
-        logDates(ctx.author.id)
+        logDates(ctx.author.id, "sleep")
         botdata[ctx.author.id][getDate()]["sleep"] = ex
         writeData()
         await ctx.send("Sleep time for "+getDate()+" set to "+ex)
@@ -43,7 +44,7 @@ async def schoolstart(ctx, *, arg=""):
     elif (ex[0:2] == "-1"):
         await ctx.send("Incorrect time")
     else:
-        logDates(ctx.author.id)
+        logDates(ctx.author.id, "wake")
         botdata[ctx.author.id][getDate()]["schoolstart"] = ex
         writeData()
         await ctx.send("School start time for "+getDate()+" set to "+ex)
@@ -57,7 +58,7 @@ async def schoolend(ctx, *, arg=""):
     elif (ex[0:2] == "-1"):
         await ctx.send("Incorrect time")
     else:
-        logDates(ctx.author.id)
+        logDates(ctx.author.id, "sleep")
         botdata[ctx.author.id][getDate()]["schoolend"] = ex
         writeData()
         await ctx.send("School end time for "+getDate()+" set to "+ex)

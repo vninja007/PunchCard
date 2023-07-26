@@ -44,14 +44,15 @@ def getTime(useroffset=0):
     return dt
 
 
-def getDate(arg=""):
-    dtn = datetime.datetime.now() - datetime.timedelta(hours=offset)
+def getDate(arg="", useroffset=0):
+    dtn = datetime.datetime.now() - datetime.timedelta(hours=offset) + \
+        datetime.timedelta(hours=useroffset)
     dt = str(dtn)
     dt = dt[:dt.index(" ")]
     return dt
 
 
-def getDateTime():
+def getDateTime(useroffset=0):
     dtn = datetime.datetime.now() - datetime.timedelta(hours=offset)
     dt = str(dtn.strftime("%Y-%m-%d %H:%M:%S"))
     return dt
