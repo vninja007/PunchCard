@@ -33,6 +33,8 @@ def clockOutProcedure(author):
             elapsed, botdata[author]["total"])
         del botdata[author]["start"]
         botdata[author]["sessions"] += 1
+
+    botdata[author]["status"] = "free"
     writeData()
     return (tt, elapsed)
 

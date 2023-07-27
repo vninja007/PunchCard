@@ -1,8 +1,8 @@
 from nextcord.ext import commands
 import nextcord
 from startup import bot, botdata
-from basics import writeData, writeConf, getUTime, getTime, getDateTime
-from utilfuncs import clockOutProcedure
+from basics import writeData, writeConf, getUTime, getTime, getDateTime, getDate
+from utilfuncs import clockOutProcedure, addDaytoDate
 
 
 @bot.command()
@@ -18,6 +18,7 @@ async def init(ctx, arg=""):
             botdata[ctx.author.id]["total"] = "00:00:00"
             botdata[ctx.author.id]["sessions"] = 0
             botdata[ctx.author.id]["timezone"] = int(arg)
+            botdata[ctx.author.id]["status"] = "free"
             # botdata[ctx.author.id]["start"] = -1
             # botdata[ctx.author.id]["livetask"] = ""
             botdata[ctx.author.id]["tasks"] = {}
@@ -82,12 +83,14 @@ async def start(ctx, *, arg=""):
                         tt = getTime(botdata[ctx.author.id]["timezone"])
                         botdata[ctx.author.id]["start"] = getDateTime()
                         botdata[ctx.author.id]["livetask"] = arg
+                        botdata[ctx.author.id]["status"] = "working"
                         writeData()
                         await ctx.send("Clocked in for '"+arg+"' at " + str(tt))
                 else:
                     ut = getUTime()
                     tt = getTime(botdata[ctx.author.id]["timezone"])
                     botdata[ctx.author.id]["start"] = getDateTime()
+                    botdata[ctx.author.id]["status"] = "working"
                     writeData()
                     await ctx.send("Clocked in at " + str(tt))
             else:

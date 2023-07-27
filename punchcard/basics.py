@@ -44,7 +44,7 @@ def getTime(useroffset=0):
     return dt
 
 
-def getDate(arg="", useroffset=0):
+def getDate(useroffset=0):
     dtn = datetime.datetime.now() - datetime.timedelta(hours=offset) + \
         datetime.timedelta(hours=useroffset)
     dt = str(dtn)

@@ -15,6 +15,7 @@ async def wakeup(ctx, *, arg=""):
     thedate = day.split()[0]
 
     botdata[ctx.author.id][thedate]["wakeup"] = ex.split()[1]
+    botdata[ctx.author.id]["status"] = "free"
     writeData()
     await ctx.send("Wakeup time for "+str(thedate)+" set to "+ex.split()[1])
 
@@ -27,6 +28,7 @@ async def sleep(ctx, *, arg=""):
     thedate = day.split()[0]
 
     botdata[ctx.author.id][thedate]["sleep"] = ex.split()[1]
+    botdata[ctx.author.id]["status"] = "sleeping"
     writeData()
     await ctx.send("Sleep time for "+str(thedate)+" set to "+ex.split()[1])
 
@@ -39,6 +41,7 @@ async def schoolstart(ctx, *, arg=""):
     thedate = day.split()[0]
 
     botdata[ctx.author.id][thedate]["schoolstart"] = ex.split()[1]
+    botdata[ctx.author.id]["status"] = "school"
     writeData()
     await ctx.send("School start time for "+str(thedate)+" set to "+ex.split()[1])
 
@@ -51,5 +54,6 @@ async def schoolend(ctx, *, arg=""):
     thedate = day.split()[0]
 
     botdata[ctx.author.id][thedate]["schoolend"] = ex.split()[1]
+    botdata[ctx.author.id]["status"] = "free"
     writeData()
     await ctx.send("School end time for "+str(thedate)+" set to "+ex.split()[1])
