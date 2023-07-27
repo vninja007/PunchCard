@@ -9,22 +9,14 @@ import datetime
 
 @bot.command()
 async def wakeup(ctx, *, arg=""):
-    if (arg != ""):
-        ex = extractTime(arg)
-        print("Extracted: "+ex)
-    else:
-        ex = ""
-    if (arg == ""):
-        await ctx.send("Usage: p.wakeup [time]")
-    elif (ex[0:2] == "-1"):
-        await ctx.send("Incorrect time")
-    else:
-        logDates(ctx.author.id, ex, "wake")
-        day = correctDate(ctx.author.id, ex, "wake")
-        thedate = day.split()[0]
-        botdata[ctx.author.id][thedate]["wakeup"] = ex
-        writeData()
-        await ctx.send("Wakeup time for "+str(thedate)+" set to "+ex)
+    ex = getDateTime(botdata[ctx.author.id]["timezone"])
+    logDates(ctx.author.id, ex, "wake")
+    day = correctDate(ctx.author.id, ex, "wake")
+    thedate = day.split()[0]
+
+    botdata[ctx.author.id][thedate]["wakeup"] = ex.split()[1]
+    writeData()
+    await ctx.send("Wakeup time for "+str(thedate)+" set to "+ex.split()[1])
 
 
 @bot.command()
