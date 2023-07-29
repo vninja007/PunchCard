@@ -11,7 +11,6 @@ async def init(ctx, arg=""):
     arg = arg.replace("UTC", "")
     arg = arg.replace("GMT", "")
     arg = arg.replace("+", "")
-    print(type(botdata))
     if (ctx.author.id not in botdata):
         if (arg != "" or not arg.isnumeric()):
             botdata[ctx.author.id] = {}
@@ -119,7 +118,6 @@ async def stop(ctx, *, arg=""):
 @bot.event
 async def on_presence_update(before, after):
     if str(after.status) == "offline":
-        print("{} has gone {}.".format(after.name, after.status))
         if (after.id in botdata):
             if ("start" in botdata[after.id]):
                 tt, hms = clockOutProcedure(after.id)

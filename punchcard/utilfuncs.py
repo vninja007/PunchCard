@@ -17,7 +17,6 @@ def clockOutProcedure(author):
     t2 = getDateTime()                          # 2023-01-01 13:34:56
     tt = getTime(botdata[author]["timezone"])
     elapsed = diffDatefromDate(t1, t2)   # 01:00:00
-    print(elapsed)
     if ("livetask" in botdata[author]):
 
         task = botdata[author]["livetask"]
@@ -68,7 +67,6 @@ def extractTime(instr):
         x = re.match(r, instr)
         if (bool(x)):
             x = x.groups()
-            print(x)
             if (x[0] != None):
                 hours = int(x[0])
                 hours = hours-12 if hours == 12 or hours == 24 else hours
@@ -105,19 +103,16 @@ def correctDate(author, theday="", boundary="none"):
 
     if (theday == ""):
         theday = getDateTime(botdata[author]["timezone"])
-        print(theday)
     if (theday.count("-") == 0):
         td1 = getDate(botdata[author]["timezone"])
         theday = td1 + " " + theday
 
     tmp = theday.split(" ")
-    print(tmp)
     time = tmp[1]
     date = tmp[0]
 
     if (boundary == "wake"):
         if (detWakeupBoundary(time)):
-            print(detWakeupBoundary(time))
             theday = addDaytoDate(theday, 1)
     if (boundary == "sleep"):
         if (detSleepBoundary(time)):
@@ -128,7 +123,6 @@ def correctDate(author, theday="", boundary="none"):
 
 def logDates(author, theday, boundary="none"):
     date = correctDate(author, theday, boundary)
-    print("logdate:" + date)
     date = date.split()[0]
     if (date not in botdata[author]):
         botdata[author][date] = {}
@@ -203,12 +197,39 @@ def addTimetoTime(start, end):
 
 
 """
+Get time differnece
+ex.
+Between 23:00:00 and 05:00:00 is 06:00:00
+Between 23:00:00 and 23:00:01 is 00:00:01
+"""
+
+
+def diffTimefromTime(start_time, end_time):
+    def time_to_seconds(time_str):
+        h, m, s = map(int, time_str.split(':'))
+        return h * 3600 + m * 60 + s
+
+    start_seconds = time_to_seconds(start_time)
+    end_seconds = time_to_seconds(end_time)
+
+    time_diff_seconds = end_seconds - start_seconds
+
+    if time_diff_seconds < 0:
+        time_diff_seconds += 24 * 3600
+
+    hours = time_diff_seconds // 3600
+    minutes = (time_diff_seconds % 3600) // 60
+    seconds = time_diff_seconds % 60
+
+    return f"{hours:02d}:{minutes:02d}:{seconds:02d}"
+
+
+"""
 IN: HH:mm:SS
 OUT: t/f
 
 Determines whether to add +1 day beacuse we naturally stay up past 12:00 sometimes.
 
-Cutoff = 2:30
 """
 
 
