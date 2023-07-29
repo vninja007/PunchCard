@@ -30,6 +30,14 @@ async def init(ctx, arg=""):
 
 
 @bot.command()
+async def status(ctx, arg=""):
+    if (ctx.author.id in botdata):
+        await ctx.send("You are "+botdata[ctx.author.id]["status"])
+    else:
+        await ctx.send("User does not exist! Type p.init to begin!")
+
+
+@bot.command()
 async def maketask(ctx, *, arg=""):
     arg = arg.lower()
     if (ctx.author.id in botdata):
