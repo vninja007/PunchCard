@@ -117,7 +117,12 @@ def correctDate(author, theday="", boundary="none"):
     if (boundary == "sleep"):
         if (detSleepBoundary(time)):
             theday = addDaytoDate(theday, -1)
-
+    if (boundary == "schoolstart"):
+        if (detSchoolStartBoundary(time)):
+            theday = addDaytoDate(theday, 1)
+    if (boundary == "schoolend"):
+        if (detSchoolEndBoundary(time)):
+            theday = addDaytoDate(theday, -1)
     return theday
 
 
@@ -241,6 +246,14 @@ def detSleepBoundary(intime):
     return False
 
 
+def detSchoolEndBoundary(intime):
+    intime = [int(i) for i in intime.split(":")]
+    dec = intime[0] + intime[1]/60 + intime[2]//3600
+    if (dec > 0 and dec < float(botconf["schoolendboundary"])):
+        return True
+    return False
+
+
 """
 IN: HH:mm:SS
 OUT: t/f
@@ -254,5 +267,14 @@ def detWakeupBoundary(intime):
     dec = intime[0] + intime[1]/60 + intime[2]//3600
 
     if (dec < 24 and dec > float(botconf["dayboundary"])):
+        return True
+    return False
+
+
+def detSchoolStartBoundary(intime):
+    intime = [int(i) for i in intime.split(":")]
+    dec = intime[0] + intime[1]/60 + intime[2]//3600
+
+    if (dec < 24 and dec > float(botconf["schoolstartboundary"])):
         return True
     return False
