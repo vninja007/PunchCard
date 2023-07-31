@@ -91,3 +91,22 @@ async def schoolend(ctx, *, arg=""):
                 schooltime)
     writeData()
     await ctx.send("School end time for "+str(thedate)+" set to "+ex.split()[1])
+
+
+@bot.command()
+async def reset(ctx, *, arg=""):
+    if (arg not in ["schoolend", "schoolstart", "wakeup", "wake", "sleep"]):
+        await ctx.send("Improper command")
+    else:
+        try:
+            arg = arg.replace("up", "")
+            arg = arg.replace("wake", "wakeup")
+            del botdata[ctx.author.id][arg]
+            arg = arg.replace("school", "school ")
+            await ctx.send(f"Reset {arg}. It is not logged anymore.")
+        except KeyError:
+            arg = arg.replace("up", "")
+            arg = arg.replace("wake", "wakeup")
+            arg = arg.replace("school", "school ")
+            arg = arg[0].upper() + arg[1:]
+            await ctx.send(f"{arg} is not defined for today")
