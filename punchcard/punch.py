@@ -135,44 +135,47 @@ async def on_presence_update(before, after):
 
 @bot.command()
 async def tasklist(ctx, arg=""):
-    if (len(botdata[ctx.author.id]["tasks"]) == 0):
-        await ctx.send("No tasks logged")
-    else:
-        tosend = ""
-        runtot = 0.0
-        for i in botdata[ctx.author.id]["tasks"]:
-            tosend += i
-            runtot += botdata[ctx.author.id]["tasks"][i]
-            hrs = (botdata[ctx.author.id]["tasks"][i])//60
-            mins = int(botdata[ctx.author.id]["tasks"][i]//1)
-            secs = (botdata[ctx.author.id]["tasks"][i] * 60) // 1
+    if (ctx.author.id in botdata):
+        if (len(botdata[ctx.author.id]["tasks"]) == 0):
+            await ctx.send("No tasks logged")
+        else:
+            tosend = ""
+            runtot = 0.0
+            for i in botdata[ctx.author.id]["tasks"]:
+                tosend += i
+                runtot += botdata[ctx.author.id]["tasks"][i]
+                hrs = (botdata[ctx.author.id]["tasks"][i])//60
+                mins = int(botdata[ctx.author.id]["tasks"][i]//1)
+                secs = (botdata[ctx.author.id]["tasks"][i] * 60) // 1
+                hrs = int(hrs)
+                mins = int(mins)
+                secs = int(secs)
+                hrs = str(hrs) if hrs >= 10 else "0"+str(hrs)
+                mins = str(mins) if mins >= 10 else "0"+str(mins)
+                secs = str(secs) if secs >= 10 else "0"+str(secs)
+                tosend += ": "+hrs+":"+mins+":"+secs+"\n"
+            leftovers = botdata[ctx.author.id]["total"]-runtot
+            hrs = (leftovers)//60
+            mins = int(leftovers//1)
+            secs = (leftovers * 60) // 1
             hrs = int(hrs)
             mins = int(mins)
             secs = int(secs)
             hrs = str(hrs) if hrs >= 10 else "0"+str(hrs)
             mins = str(mins) if mins >= 10 else "0"+str(mins)
             secs = str(secs) if secs >= 10 else "0"+str(secs)
-            tosend += ": "+hrs+":"+mins+":"+secs+"\n"
-        leftovers = botdata[ctx.author.id]["total"]-runtot
-        hrs = (leftovers)//60
-        mins = int(leftovers//1)
-        secs = (leftovers * 60) // 1
-        hrs = int(hrs)
-        mins = int(mins)
-        secs = int(secs)
-        hrs = str(hrs) if hrs >= 10 else "0"+str(hrs)
-        mins = str(mins) if mins >= 10 else "0"+str(mins)
-        secs = str(secs) if secs >= 10 else "0"+str(secs)
-        tosend += "UNASSIGNED: "+hrs+":"+mins+":"+secs+"\n"
-        tosend += "-"*40
-        hrs = (botdata[ctx.author.id]["total"])//60
-        mins = int(botdata[ctx.author.id]["total"]//1)
-        secs = (botdata[ctx.author.id]["total"] * 60) // 1
-        hrs = int(hrs)
-        mins = int(mins)
-        secs = int(secs)
-        hrs = str(hrs) if hrs >= 10 else "0"+str(hrs)
-        mins = str(mins) if mins >= 10 else "0"+str(mins)
-        secs = str(secs) if secs >= 10 else "0"+str(secs)
-        tosend += "\nTotal: "+hrs+":"+mins+":"+secs+"\n"
-        await ctx.send(tosend)
+            tosend += "UNASSIGNED: "+hrs+":"+mins+":"+secs+"\n"
+            tosend += "-"*40
+            hrs = (botdata[ctx.author.id]["total"])//60
+            mins = int(botdata[ctx.author.id]["total"]//1)
+            secs = (botdata[ctx.author.id]["total"] * 60) // 1
+            hrs = int(hrs)
+            mins = int(mins)
+            secs = int(secs)
+            hrs = str(hrs) if hrs >= 10 else "0"+str(hrs)
+            mins = str(mins) if mins >= 10 else "0"+str(mins)
+            secs = str(secs) if secs >= 10 else "0"+str(secs)
+            tosend += "\nTotal: "+hrs+":"+mins+":"+secs+"\n"
+            await ctx.send(tosend)
+    else:
+        await ctx.send("User does not exist! Type p.init to begin!")
