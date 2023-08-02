@@ -51,6 +51,9 @@ async def sleep(ctx, *, arg=""):
             tomorrow = addDaytoDate(thedate, 1)
             tomorrow = tomorrow.split()[0]
             print(tomorrow)
+            if ("schoolend" not in botdata[ctx.author.id][thedate] and "schoolstart" in botdata[ctx.author.id][thedate]):
+                botdata[ctx.author.id][thedate]["schoolend"] = ex.split()[1]
+                await ctx.send("Automatically set wakeup time for "+str(thedate)+" to "+ex.split()[1])
             if (tomorrow in botdata[ctx.author.id]):
                 if ("wakeup" in botdata[ctx.author.id][tomorrow]):
                     sleeptime = diffTimefromTime(
