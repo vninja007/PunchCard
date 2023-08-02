@@ -78,7 +78,10 @@ async def deltask(ctx, *, arg=""):
 async def start(ctx, *, arg=""):
     if (ctx.message.author.raw_status == "offline"):
         await ctx.send("You are offline/invisible! Please change to online/idle/donotdisturb to start!")
-
+    elif (botdata[ctx.author.id]["status"] == "sleeping"):
+        await ctx.send("You are sleeping! Use p.wakeup to wake up!")
+    elif (botdata[ctx.author.id]["status"] == "school"):
+        await ctx.send("You are in school! Use p.schoolend (Note: school hours are auto-included in productivity calculations)")
     else:
         arg = arg.lower()
         if (ctx.author.id in botdata):

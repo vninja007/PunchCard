@@ -35,24 +35,30 @@ async def wakeup(ctx, *, arg=""):
 @bot.command()
 async def sleep(ctx, *, arg=""):
     if (ctx.author.id in botdata):
-        ex = getDateTime(botdata[ctx.author.id]["timezone"])
-        logDates(ctx.author.id, ex, "sleep")
-        day = correctDate(ctx.author.id, ex, "sleep")
-        thedate = day.split()[0]
+        if (botdata[ctx.author.id]["status"] == "working"):
+            await ctx.send("You are working! Use p.stop to stop working!")
+        elif (botdata[ctx.author.id]["status"] == "school"):
+            await ctx.send("You are in school! Use p.schoolend (Note: school hours are auto-included in productivity calculations)")
+        else:
+            ex = getDateTime(botdata[ctx.author.id]["timezone"])
+            logDates(ctx.author.id, ex, "sleep")
+            day = correctDate(ctx.author.id, ex, "sleep")
+            thedate = day.split()[0]
 
-        botdata[ctx.author.id][thedate]["sleep"] = ex.split()[1]
-        botdata[ctx.author.id]["status"] = "sleeping"
+            botdata[ctx.author.id][thedate]["sleep"] = ex.split()[1]
+            botdata[ctx.author.id]["status"] = "sleeping"
 
-        tomorrow = addDaytoDate(thedate, 1)
-        tomorrow = tomorrow.split()[0]
-        print(tomorrow)
-        if (tomorrow in botdata[ctx.author.id]):
-            if ("wakeup" in botdata[ctx.author.id][tomorrow]):
-                sleeptime = diffTimefromTime(
-                    botdata[ctx.author.id][thedate]["sleep"], botdata[ctx.author.id][tomorrow]["wakeup"])
-                botdata[ctx.author.id][tomorrow]["sleeptime"] = str(sleeptime)
-        writeData()
-        await ctx.send("Sleep time for "+str(thedate)+" set to "+ex.split()[1])
+            tomorrow = addDaytoDate(thedate, 1)
+            tomorrow = tomorrow.split()[0]
+            print(tomorrow)
+            if (tomorrow in botdata[ctx.author.id]):
+                if ("wakeup" in botdata[ctx.author.id][tomorrow]):
+                    sleeptime = diffTimefromTime(
+                        botdata[ctx.author.id][thedate]["sleep"], botdata[ctx.author.id][tomorrow]["wakeup"])
+                    botdata[ctx.author.id][tomorrow]["sleeptime"] = str(
+                        sleeptime)
+            writeData()
+            await ctx.send("Sleep time for "+str(thedate)+" set to "+ex.split()[1])
     else:
         await ctx.send("User does not exist! Type p.init to begin!")
 
@@ -60,23 +66,28 @@ async def sleep(ctx, *, arg=""):
 @bot.command()
 async def schoolstart(ctx, *, arg=""):
     if (ctx.author.id in botdata):
-        ex = getDateTime(botdata[ctx.author.id]["timezone"])
-        logDates(ctx.author.id, ex, "schoolstart")
-        day = correctDate(ctx.author.id, ex, "schoolstart")
-        thedate = day.split()[0]
+        if (botdata[ctx.author.id]["status"] == "working"):
+            await ctx.send("You are working! Use p.stop to stop working!")
+        elif (botdata[ctx.author.id]["status"] == "sleeping"):
+            await ctx.send("You are in sleeping! Use p.wakeup!")
+        else:
+            ex = getDateTime(botdata[ctx.author.id]["timezone"])
+            logDates(ctx.author.id, ex, "schoolstart")
+            day = correctDate(ctx.author.id, ex, "schoolstart")
+            thedate = day.split()[0]
 
-        botdata[ctx.author.id][thedate]["schoolstart"] = ex.split()[1]
-        botdata[ctx.author.id]["status"] = "school"
+            botdata[ctx.author.id][thedate]["schoolstart"] = ex.split()[1]
+            botdata[ctx.author.id]["status"] = "school"
 
-        print(thedate)
-        if (thedate in botdata[ctx.author.id]):
-            if ("schoolend" in botdata[ctx.author.id][thedate]):
-                schooltime = diffTimefromTime(
-                    botdata[ctx.author.id][thedate]["schoolstart"], botdata[ctx.author.id][thedate]["schoolend"])
-                botdata[ctx.author.id][thedate]["schooltime"] = str(
-                    schooltime)
-        writeData()
-        await ctx.send("School start time for "+str(thedate)+" set to "+ex.split()[1])
+            print(thedate)
+            # if (thedate in botdata[ctx.author.id]):
+            #     if ("schoolend" in botdata[ctx.author.id][thedate]):
+            #         schooltime = diffTimefromTime(
+            #             botdata[ctx.author.id][thedate]["schoolstart"], botdata[ctx.author.id][thedate]["schoolend"])
+            #         botdata[ctx.author.id][thedate]["schooltime"] = str(
+            #             schooltime)
+            writeData()
+            await ctx.send("School start time for "+str(thedate)+" set to "+ex.split()[1])
     else:
         await ctx.send("User does not exist! Type p.init to begin!")
 
@@ -84,23 +95,27 @@ async def schoolstart(ctx, *, arg=""):
 @bot.command()
 async def schoolend(ctx, *, arg=""):
     if (ctx.author.id in botdata):
-        ex = getDateTime(botdata[ctx.author.id]["timezone"])
-        logDates(ctx.author.id, ex, "schoolend")
-        day = correctDate(ctx.author.id, ex, "schoolend")
-        thedate = day.split()[0]
 
-        botdata[ctx.author.id][thedate]["schoolend"] = ex.split()[1]
-        botdata[ctx.author.id]["status"] = "free"
+        if (botdata[ctx.author.id]["status"] != "school"):
+            await ctx.send("You are not in school! use p.schoolstart")
+        else:
+            ex = getDateTime(botdata[ctx.author.id]["timezone"])
+            logDates(ctx.author.id, ex, "schoolend")
+            day = correctDate(ctx.author.id, ex, "schoolend")
+            thedate = day.split()[0]
 
-        print(thedate)
-        if (thedate in botdata[ctx.author.id]):
-            if ("schoolstart" in botdata[ctx.author.id][thedate]):
-                schooltime = diffTimefromTime(
-                    botdata[ctx.author.id][thedate]["schoolstart"], botdata[ctx.author.id][thedate]["schoolend"])
-                botdata[ctx.author.id][thedate]["schooltime"] = str(
-                    schooltime)
-        writeData()
-        await ctx.send("School end time for "+str(thedate)+" set to "+ex.split()[1])
+            botdata[ctx.author.id][thedate]["schoolend"] = ex.split()[1]
+            botdata[ctx.author.id]["status"] = "free"
+
+            print(thedate)
+            if (thedate in botdata[ctx.author.id]):
+                if ("schoolstart" in botdata[ctx.author.id][thedate]):
+                    schooltime = diffTimefromTime(
+                        botdata[ctx.author.id][thedate]["schoolstart"], botdata[ctx.author.id][thedate]["schoolend"])
+                    botdata[ctx.author.id][thedate]["schooltime"] = str(
+                        schooltime)
+            writeData()
+            await ctx.send("School end time for "+str(thedate)+" set to "+ex.split()[1])
     else:
         await ctx.send("User does not exist! Type p.init to begin!")
 
