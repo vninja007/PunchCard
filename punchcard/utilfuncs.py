@@ -108,6 +108,7 @@ def correctDate(author, theday="", boundary="none"):
         theday = td1 + " " + theday
 
     tmp = theday.split(" ")
+    boundary = boundary.replace("up", "")
     time = tmp[1]
     date = tmp[0]
 

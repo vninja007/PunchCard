@@ -79,6 +79,9 @@ async def schoolstart(ctx, *, arg=""):
             botdata[ctx.author.id][thedate]["schoolstart"] = ex.split()[1]
             botdata[ctx.author.id]["status"] = "school"
 
+            if ("wakeup" not in botdata[ctx.author.id][thedate]):
+                botdata[ctx.author.id][thedate]["wakeup"] = ex.split()[1]
+                await ctx.send("Automatically set wakeup time for "+str(thedate)+" to "+ex.split()[1])
             print(thedate)
             # if (thedate in botdata[ctx.author.id]):
             #     if ("schoolend" in botdata[ctx.author.id][thedate]):

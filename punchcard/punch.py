@@ -2,7 +2,7 @@ from nextcord.ext import commands
 import nextcord
 from startup import bot, botdata
 from basics import writeData, writeConf, getUTime, getTime, getDateTime, getDate
-from utilfuncs import clockOutProcedure, addDaytoDate
+from utilfuncs import clockOutProcedure, addDaytoDate, correctDate
 
 
 @bot.command()
@@ -95,6 +95,13 @@ async def start(ctx, *, arg=""):
                         botdata[ctx.author.id]["start"] = getDateTime()
                         botdata[ctx.author.id]["livetask"] = arg
                         botdata[ctx.author.id]["status"] = "working"
+                        ex = getDateTime(botdata[ctx.author.id]["timezone"])
+                        day = correctDate(ctx.author.id, ex, "wake")
+                        thedate = day.split()[0]
+                        print(thedate)
+                        if ("wakeup" not in botdata[ctx.author.id][thedate]):
+                            botdata[ctx.author.id][thedate]["wakeup"] = str(tt)
+                            await ctx.send("Automatically set wakeup time for "+str(thedate)+" to "+str(tt))
                         writeData()
                         await ctx.send("Clocked in for '"+arg+"' at " + str(tt))
                 else:
@@ -102,6 +109,13 @@ async def start(ctx, *, arg=""):
                     tt = getTime(botdata[ctx.author.id]["timezone"])
                     botdata[ctx.author.id]["start"] = getDateTime()
                     botdata[ctx.author.id]["status"] = "working"
+                    ex = getDateTime(botdata[ctx.author.id]["timezone"])
+                    day = correctDate(ctx.author.id, ex, "wake")
+                    thedate = day.split()[0]
+                    print(thedate)
+                    if ("wakeup" not in botdata[ctx.author.id][thedate]):
+                        botdata[ctx.author.id][thedate]["wakeup"] = str(tt)
+                        await ctx.send("Automatically set wakeup time for "+str(thedate)+" to "+str(tt))
                     writeData()
                     await ctx.send("Clocked in at " + str(tt))
             else:
