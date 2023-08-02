@@ -18,6 +18,7 @@ async def init(ctx, arg=""):
             botdata[ctx.author.id]["sessions"] = 0
             botdata[ctx.author.id]["timezone"] = int(arg)
             botdata[ctx.author.id]["status"] = "free"
+            botdata[ctx.author.id]["sessionslist"] = {}
             # botdata[ctx.author.id]["start"] = -1
             # botdata[ctx.author.id]["livetask"] = ""
             botdata[ctx.author.id]["tasks"] = {}
@@ -111,7 +112,14 @@ async def stop(ctx, *, arg=""):
     arg = arg.lower()
     if (ctx.author.id in botdata):
         if ("start" in botdata[ctx.author.id]):
+            starttime = botdata[ctx.author.id]["start"]
+            endtime = getTime()
             tt, hms = clockOutProcedure(ctx.author.id)
+            botdata[ctx.author.id]["sessionslist"][botdata[ctx.author.id]
+                                                   ["sessions"]] = [starttime, endtime]
+            print(botdata[ctx.author.id]["sessionslist"]
+                  [botdata[ctx.author.id]["sessions"]])
+            writeData()
             if (arg != ""):
                 await ctx.send("Clocked out from '"+arg+"' at " + str(tt) + ". You worked for "+str(hms))
             else:
