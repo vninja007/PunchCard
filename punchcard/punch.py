@@ -2,7 +2,7 @@ from nextcord.ext import commands
 import nextcord
 from startup import bot, botdata
 from basics import writeData, writeConf, getUTime, getTime, getDateTime, getDate
-from utilfuncs import clockOutProcedure, addDaytoDate, correctDate
+from utilfuncs import clockOutProcedure, addDaytoDate, correctDate, checkTimeSpent
 
 
 @bot.command()
@@ -131,9 +131,16 @@ async def stop(ctx, *, arg=""):
         if ("start" in botdata[ctx.author.id]):
             starttime = botdata[ctx.author.id]["start"]
             endtime = getTime()
+            tog = botdata[ctx.author.id]["livetask"] if "livetask" in botdata[ctx.author.id] else ""
             tt, hms = clockOutProcedure(ctx.author.id)
-            botdata[ctx.author.id]["sessionslist"][botdata[ctx.author.id]
-                                                   ["sessions"]] = [starttime, endtime]
+            if (tog != ""):
+                print("true")
+                botdata[ctx.author.id]["sessionslist"][botdata[ctx.author.id]
+                                                       ["sessions"]] = [starttime, endtime, tog]
+
+            else:
+                botdata[ctx.author.id]["sessionslist"][botdata[ctx.author.id]
+                                                       ["sessions"]] = [starttime, endtime]
             print(botdata[ctx.author.id]["sessionslist"]
                   [botdata[ctx.author.id]["sessions"]])
             writeData()
@@ -204,3 +211,68 @@ async def tasklist(ctx, arg=""):
             await ctx.send(tosend)
     else:
         await ctx.send("User does not exist! Type p.init to begin!")
+
+
+def elapsedError():
+    s = """Malformed argument! Use one of the following:
+    p.elapsed
+    p.elapsed [task]
+    p.elapsed [YYYY-MM-DD] [YYYY-MM-DD]
+    p.elapsed [task] [YYYY-MM-DD] [YYYY-MM-DD]
+    p.elapsed [YYYY-MM-DD HH:mm:SS] [YYYY-MM-DD HH:mm:SS]
+    p.elapsed [task] [YYYY-MM-DD HH:mm:SS] [YYYY-MM-DD HH:mm:SS]"""
+    return s
+
+
+@bot.command()
+async def elapsed(ctx, *, arg=""):
+    if (arg == ""):
+        timespent = checkTimeSpent(ctx.author.id, "1000-01-01", "9999-01-01")
+        await ctx.send(f"You have worked for {timespent}, excluding school hours")
+    else:
+        arg = arg.split()
+        if (len(arg) == 1):
+            task = arg[0]
+            timespent = checkTimeSpent(
+                ctx.author.id, "1000-01-01", "9999-01-01", task)
+            await ctx.send(f"You have worked on {task} for {timespent}, excluding school hours")
+        elif (len(arg) == 2):
+            st = arg[0]
+            et = arg[1]
+            try:
+                await ctx.send(f"You have worked for {checkTimeSpent(ctx.author.id, st, et)}, excluding school hours")
+            except ValueError:
+                await ctx.send(elapsedError())
+        elif (len(arg) == 3):
+            task = arg[0]
+            st = arg[1]
+            et = arg[2]
+            try:
+                await ctx.send(f"You have worked on {task} for {checkTimeSpent(ctx.author.id, st, et, task)}, excluding school hours")
+
+            except ValueError:
+                await ctx.send(elapsedError())
+        elif (len(arg) == 4):
+            st = arg[0]
+            sh = arg[1]
+            et = arg[2]
+            eh = arg[3]
+
+            try:
+                await ctx.send(f"You have worked for {checkTimeSpent(ctx.author.id, st+' '+sh, et+' '+eh)}, excluding school hours")
+
+            except ValueError:
+                await ctx.send(elapsedError())
+        elif (len(arg) == 5):
+            task = arg[0]
+            st = arg[1]
+            sh = arg[2]
+            et = arg[3]
+            eh = arg[4]
+            try:
+                await ctx.send(f"You have worked on {task} for {checkTimeSpent(ctx.author.id, st+' '+sh, et+' '+eh, task)}, excluding school hours")
+
+            except ValueError:
+                await ctx.send(elapsedError())
+        else:
+            await ctx.send(elapsedError())

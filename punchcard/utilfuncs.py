@@ -179,6 +179,11 @@ def addDaytoDate(start, inc):
     return str(start)
 
 
+def addHourtoDate(start, hrs):
+    start = datetime.fromisoformat(start) + timedelta(hours=hrs)
+    return str(start)
+
+
 """
 IN - HH:MM:SS
 OUT - HH:MM:SS
@@ -283,3 +288,61 @@ def detSchoolStartBoundary(intime):
     if (dec < 24 and dec > float(botconf["schoolstartboundary"])):
         return True
     return False
+
+
+def checkTimeSpent(author, startbound, endbound, task=""):
+    usrtimezone = botdata[author]["timezone"]
+    startbound = addHourtoDate(startbound, -usrtimezone)
+    endbound = addHourtoDate(endbound, -usrtimezone)
+
+    logs = botdata[author]["sessionslist"]
+    elapsed = [0, 0, 0]
+    startbound = datetime.fromisoformat(startbound)
+    endbound = datetime.fromisoformat(endbound)
+    for i in logs:
+        i = logs[i]
+        if (task != ""):
+            if (not len(i) == 3 or not i[2] == task):
+                continue
+        st = datetime.fromisoformat(i[0])
+        et = datetime.fromisoformat(i[1])
+        if (st < startbound):
+            # case 2, 4, 5
+
+            # case 5
+            if (et < startbound):
+                continue
+            # case 4
+            if (et > endbound):
+                timediff = endbound - startbound
+            else:
+                timediff = et - startbound
+
+        elif (st < endbound):
+            # case 1, 3
+
+            # case 1
+            if (et < endbound):
+                timediff = et - st
+            else:
+                timediff = endbound - st
+        else:
+            # case 1, 3, 6
+            continue
+        hrs = timediff.seconds//3600
+        mins = (timediff.seconds//60) % 60
+        secs = timediff.seconds % 60
+        elapsed[2] += secs
+        elapsed[1] += mins
+        elapsed[0] += hrs
+
+        elapsed[1] += elapsed[2]//60
+        elapsed[2] = elapsed[2] % 60
+        elapsed[0] += elapsed[1]//60
+        elapsed[1] = elapsed[1] % 60
+        # print(elapsed)
+    elapsed[0] = "0"+str(elapsed[0]) if elapsed[0] < 10 else str(elapsed[0])
+    elapsed[1] = "0"+str(elapsed[1]) if elapsed[1] < 10 else str(elapsed[1])
+    elapsed[2] = "0"+str(elapsed[2]) if elapsed[2] < 10 else str(elapsed[2])
+
+    return f"{elapsed[0]}:{elapsed[1]}:{elapsed[2]}"
