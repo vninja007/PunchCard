@@ -144,11 +144,15 @@ OUT: HH:MM:SS
 
 
 def diffDatefromDate(start, end):
+    start1 = start
+    end1 = end
     start = datetime.fromisoformat(start)
     end = datetime.fromisoformat(end)
     diff = end-start
     if (not ("days" in str(diff))):
         diff = "0 days, "+str(diff)
+    if ("-" in diff):
+        return "-"+diffDatefromDate(end1, start1)
     diff = str(diff).split(", ")
     hms = diff[1]
     hms = hms.split(":")
