@@ -340,7 +340,7 @@ def checkTimeSpent(author, startbound, endbound, task=""):
         elapsed[2] = elapsed[2] % 60
         elapsed[0] += elapsed[1]//60
         elapsed[1] = elapsed[1] % 60
-        # print(elapsed)
+        print(elapsed)
     elapsed[0] = "0"+str(elapsed[0]) if elapsed[0] < 10 else str(elapsed[0])
     elapsed[1] = "0"+str(elapsed[1]) if elapsed[1] < 10 else str(elapsed[1])
     elapsed[2] = "0"+str(elapsed[2]) if elapsed[2] < 10 else str(elapsed[2])
@@ -361,6 +361,27 @@ def getProductivity(author, sdate, edate):
     print(st+"||"+et)
     worked = checkTimeSpent(author, st, et).split(":")
     total = diffDatefromDate(st, et).split(":")
+
+    print(worked, total)
     ws = int(worked[0])*3600 + int(worked[1])*60 + int(worked[2])
     ts = int(total[0])*3600 + int(total[1])*60 + int(total[2])
     return ws/ts
+
+
+def getDayProductivity(author, day):
+    assert " " not in day
+    assert ":" not in day
+    waked = botdata[author][day]["wakeup"]
+    slept = botdata[author][day]["sleep"]
+
+    st = day
+    et = day
+    if (detWakeupBoundary(waked)):
+        st = addDaytoDate(st, -1).split()[0] + " " + waked
+    else:
+        st = st + " " + waked
+    if (detSleepBoundary(slept)):
+        et = addDaytoDate(et, 1).split()[0] + " " + slept
+    else:
+        et = et + " " + slept
+    return getProductivity(author, st, et)
