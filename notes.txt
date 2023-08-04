@@ -1,0 +1,3 @@
+wake/sleep/school(end/start) is stored in user's timezone time
+
+sessoin times/clockin/clockout are in UTC
