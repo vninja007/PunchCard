@@ -2,7 +2,7 @@ from nextcord.ext import commands
 import nextcord
 from startup import bot, botdata
 from basics import writeData, writeConf, getUTime, getTime, getDateTime, getDate
-from utilfuncs import clockOutProcedure, addDaytoDate, correctDate, checkTimeSpent
+from utilfuncs import clockOutProcedure, addDaytoDate, correctDate, checkTimeSpent, getProductivity
 
 
 @bot.command()
@@ -276,3 +276,9 @@ async def elapsed(ctx, *, arg=""):
                 await ctx.send(elapsedError())
         else:
             await ctx.send(elapsedError())
+
+
+@bot.command()
+async def productivity(ctx, *, arg=""):
+    arg = arg.split()
+    await ctx.send(str(getProductivity(ctx.author.id, arg[0]+" "+arg[1], arg[2]+" "+arg[3])))

@@ -149,7 +149,7 @@ def diffDatefromDate(start, end):
     start = datetime.fromisoformat(start)
     end = datetime.fromisoformat(end)
     diff = end-start
-    if (not ("days" in str(diff))):
+    if (not ("day" in str(diff))):
         diff = "0 days, "+str(diff)
     if ("-" in diff):
         return "-"+diffDatefromDate(end1, start1)
@@ -346,3 +346,21 @@ def checkTimeSpent(author, startbound, endbound, task=""):
     elapsed[2] = "0"+str(elapsed[2]) if elapsed[2] < 10 else str(elapsed[2])
 
     return f"{elapsed[0]}:{elapsed[1]}:{elapsed[2]}"
+
+
+def getProductivity(author, sdate, edate):
+    st = sdate
+    et = edate
+    # waked = botdata[author][sdate.split()[0]]["wakeup"]
+    # slept = botdata[author][edate.split()[0]]["sleep"]
+    # if (detWakeupBoundary(waked)):
+    #     st = addDaytoDate(st, -1).split()[0] + waked
+    # if (detSleepBoundary(slept)):
+    #     et = addDaytoDate(et, 1)+" "+
+
+    print(st+"||"+et)
+    worked = checkTimeSpent(author, st, et).split(":")
+    total = diffDatefromDate(st, et).split(":")
+    ws = int(worked[0])*3600 + int(worked[1])*60 + int(worked[2])
+    ts = int(total[0])*3600 + int(total[1])*60 + int(total[2])
+    return ws/ts
