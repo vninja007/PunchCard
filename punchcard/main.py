@@ -4,7 +4,6 @@ from punch import *
 from daily import *
 import yaml
 import datetime
-import asyncio
 
 
 with open("key.key") as rfile:
