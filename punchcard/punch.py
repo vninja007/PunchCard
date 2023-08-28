@@ -278,12 +278,36 @@ async def elapsed(ctx, *, arg=""):
             await ctx.send(elapsedError())
 
 
+def prodError():
+    s = """Malformed argument! Use one of the following:
+    p.productivity YYYY-MM-DD YYYY-MM-DD
+    p.productivity YYYY-MM-DD HH:mm:SS HH:mm:SS
+    p.productivity YYYY-MM-DD HH:mm:SS YYYY-MM-DD HH:mm:SS
+    p.dayproductivity YYYY-MM-DD
+    """
+    return s
+
+# Accurate to 3 decimal places because...
+
+
 @bot.command()
 async def productivity(ctx, *, arg=""):
     arg = arg.split()
-    await ctx.send(str(getProductivity(ctx.author.id, arg[0]+" "+arg[1], arg[2]+" "+arg[3])))
-
-
-@bot.command()
-async def dayproductivity(ctx, *, arg=""):
-    await ctx.send(str(getDayProductivity(ctx.author.id, arg)))
+    if (not (1 <= len(arg) <= 4)):
+        await ctx.send(prodError())
+    else:
+        if (len(arg) == 1):
+            arg = [arg[0], "00:00:00", arg[0], "11:59:59"]
+        elif (len(arg) == 2):
+            arg = [arg[0], "00:00:00", arg[1], "11:59:59"]
+        elif (len(arg) == 3):
+            arg = [arg[0], arg[1], arg[0], arg[2]]
+        else:  # len(arg)==4
+            pass
+        try:
+            prod = float(getProductivity(
+                ctx.author.id, arg[0]+" "+arg[1], arg[2]+" "+arg[3]))
+            prod = round(1000*prod)/10
+            await ctx.send(f"Productivity for {arg[0]} {arg[1]} to {arg[2]} {arg[3]} was **{prod}%**")
+        except (IndexError, ValueError):
+            await ctx.send(prodError())

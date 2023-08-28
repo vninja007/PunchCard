@@ -151,7 +151,7 @@ def diffDatefromDate(start, end):
     diff = end-start
     if (not ("day" in str(diff))):
         diff = "0 days, "+str(diff)
-    if ("-" in diff):
+    if ("-" in str(diff)):
         return "-"+diffDatefromDate(end1, start1)
     diff = str(diff).split(", ")
     hms = diff[1]
