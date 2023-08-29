@@ -8,7 +8,7 @@ Most study/productivity discord bots are checklist-based, enabling each user to 
 
 However, tasks are often repeated as a schedule a majority of the time instead of a simple to-do list. My experience of these discord bots involved re-inputting the same daily tasks onto the bot only to be checked off by the end of the day.
 
-This bot, on the other hand, takes an alternative approach, by
+This bot, on the other hand, takes an alternative approach, by allowing the user to clock in and clock out of tasks daily instead of checking them off. It allows the user to log and keep track of the amount of time spent on particular recurring tasks.
 
 ## Setup
 
